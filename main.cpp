@@ -16,6 +16,12 @@ class Ball{
     void Update(){
         x += speed_x;
         y += speed_y;
+        if(y + radius >= GetScreenHeight() || y - radius <= 0){
+            speed_y *= -1;
+        }
+        if(x + radius >= GetScreenWidth() || x - radius <= 0){
+            speed_x *= -1;
+        }
     }
 };
 
@@ -36,12 +42,13 @@ int main() {
     ball.speed_y = 7;
 
     while(WindowShouldClose() == false){
+        BeginDrawing();     // Create a blank canvas
+        
         // Updating
         ball.Update();
-        ClearBackground(BLACK);
 
         // Drawing
-        BeginDrawing();     // Create a blank canvas
+        ClearBackground(BLACK);     // Fill window with black color (to clear it)
         DrawLine(screen_width/2, 0, screen_width/2, screen_height, WHITE);
         ball.Draw();
         DrawRectangle(10, screen_height/2 - 60, 25, 120, WHITE);
