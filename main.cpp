@@ -12,7 +12,6 @@ class Ball{
     void Draw(){
         DrawCircle(x, y, radius, WHITE);
     }
-
     void Update(){
         x += speed_x;
         y += speed_y;
@@ -42,6 +41,11 @@ class Paddle{
         if(IsKeyDown(KEY_DOWN)){
             y = y + speed;
         }
+        LimitMovement();
+    }
+
+    protected:
+    void LimitMovement(){
         if(y <= 0){
             y = 0;
         }
@@ -51,8 +55,22 @@ class Paddle{
     }
 };
 
+class CPUPaddle: public Paddle{
+    public:
+    void Update(int ball_y){
+        if(y + height/2 < ball_y){
+            y += speed;
+        }
+        if(y + height/2 > ball_y){
+            y -= speed;
+        }
+        LimitMovement();
+    }
+};
+
 Ball ball;
 Paddle player;
+CPUPaddle cpu;
 
 int main() {    
     cout << "Starting game !" << endl;
@@ -74,18 +92,25 @@ int main() {
     player.y = screen_height/2 - player.height/2;
     player.speed = 6;
 
+    cpu.width = 25;
+    cpu.height = 120;
+    cpu.x = screen_width - (cpu.width + 10);
+    cpu.y = screen_height/2 - cpu.height/2;
+    cpu.speed = 9;
+
     while(WindowShouldClose() == false){
         BeginDrawing();     // Create a blank canvas
         
         // Updating
         ball.Update();
+        cpu.Update(ball.y);
         player.Update();
 
         // Drawing
         ClearBackground(BLACK);     // Fill window with black color (to clear it)
         DrawLine(screen_width/2, 0, screen_width/2, screen_height, WHITE);
         ball.Draw();
-        DrawRectangle(screen_width - 35, screen_height/2 - 60, 25, 120, WHITE);
+        cpu.Draw();
         player.Draw();
         EndDrawing();
     }
